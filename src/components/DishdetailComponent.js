@@ -5,10 +5,6 @@ class DishDetails extends Component {
     constructor(props){
         super(props)
 
-        // this.state = {
-        //     dish : props.showDetails,
-        //     comments: props.showDetails.comments
-        // }
     }
 
     renderDishDetails(dish){
@@ -27,21 +23,23 @@ class DishDetails extends Component {
         }
         else{
             return(
-                <div></div>
+                <div className="col-12 col-md-5 m-1">
+                    <h5>No item Selected</h5>
+                </div>
             )
         }
     }
 
     renderComments(comments){
         if(comments != null){
-            let list = comments.map((comments)=>{
+            let list = comments.map((comment)=>{
 
                 return(
-                    <li key={comments.id} >
+                    <li key={comment.id} >
                         <div>
-                            <p>{comments.comment}</p>
-                            <p>--{comments.author},
-                            {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit'}).format(new Date(Date.parse(comments.date)))}</p>
+                            <p>{comment.comment}</p>
+                            <p>--{comment.author},
+                            {new Intl.DateTimeFormat('en-US', { year: 'numeric', month: 'short', day: '2-digit'}).format(new Date(Date.parse(comment.date)))}</p>
                         </div>
                     </li>
 
@@ -59,7 +57,9 @@ class DishDetails extends Component {
         }
         else{
             return(
-                <p>No comment yet</p>
+                <div className="col-12 col-md-5 m-1">
+                    <h5>No comment yet</h5>
+                </div>
             )
         }
     }
@@ -67,11 +67,13 @@ class DishDetails extends Component {
     render(){
 
         return(
+            <div className="container">
             <div className="row">
-                {this.renderDishDetails(this.props.showDetails)}
+                {this.renderDishDetails(this.props.dish)}
                 
-                {this.renderComments(this.props.showDetails.comments)}
+                {this.props.dish && this.renderComments(this.props.dish.comments)}
 
+            </div>
             </div>
         )
     }
