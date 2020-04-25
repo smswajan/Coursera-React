@@ -108,22 +108,39 @@ class CommentFormComponent extends Component {
 								</Col>
 							</Row>
 							<Row className="form-group">
-								<Label htmlFor="comment" className="col-12">Comment</Label>
+								<Label htmlFor="comment" className="col-12">
+									Comment
+								</Label>
 								<Col>
-								<Control.textarea model=".comment" id="comment" name="comment" rows='6' className="form-control" validators={{required}} />
-								<Errors className="text-danger"
-								model=".comment" show='touched' messages={{
-									required: "Required"
-								}}/>
+									<Control.textarea
+										model=".comment"
+										id="comment"
+										name="comment"
+										rows="6"
+										className="form-control"
+										validators={{ required }}
+									/>
+									<Errors
+										className="text-danger"
+										model=".comment"
+										show="touched"
+										messages={{
+											required: "Required",
+										}}
+									/>
 								</Col>
 							</Row>
 							<Row className="form-group">
-                                <Col>
-                                    <Button onClick={this.toggleModal} type="submit" color="primary">
-                                    Submit
-                                    </Button>
-                                </Col>
-                            </Row>
+								<Col>
+									<Button
+										onClick={this.toggleModal}
+										type="submit"
+										color="primary"
+									>
+										Submit
+									</Button>
+								</Col>
+							</Row>
 						</LocalForm>
 					</ModalBody>
 				</Modal>
