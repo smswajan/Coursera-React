@@ -17,6 +17,10 @@ import {
 } from "reactstrap";
 import { Link } from "react-router-dom";
 import { LocalForm, Control, Errors } from "react-redux-form";
+import {Loading} from './LoadingComponent';
+import { baseUrl } from '../shared/baseUrl';
+import { FadeTransform, Fade, Stagger } from 'react-animation-components';
+
 
 const required = (val) => val && val.length;
 const maxLength = (len) => (val) => !val || val.length <= len;
@@ -38,7 +42,9 @@ class CommentFormComponent extends Component {
 		});
 	}
 	handleSubmit(values) {
-		alert("Submitted your comment as: " + JSON.stringify(values));
+		this.toggleModal();
+		// alert(JSON.stringify(values));
+		this.props.postComment(this.props.dishId, values.rating, values.author, values.comment);
 	}
 	render() {
 		return (
@@ -79,14 +85,14 @@ class CommentFormComponent extends Component {
 								</Col>
 							</Row>
 							<Row className="form-group">
-								<Label className="col-12" htmlFor="name">
+								<Label className="col-12" htmlFor="author">
 									Your Name
 								</Label>
 								<Col>
 									<Control.text
-										model=".name"
-										id="name"
-										name="name"
+										model=".author"
+										id="author"
+										name="author"
 										placeholder="You Name"
 										className="form-control"
 										validators={{
@@ -97,7 +103,7 @@ class CommentFormComponent extends Component {
 									/>
 									<Errors
 										className="text-danger"
-										model=".name"
+										model=".author"
 										show="touched"
 										messages={{
 											required: "Required",
@@ -153,13 +159,20 @@ const RenderDish = ({ dish }) => {
 	if (dish != null) {
 		return (
 			<div className="col-12 col-md-5 m-1">
+				<FadeTransform
+                in
+                transformProps={{
+                    exitTransform: 'scale(0.5) translateY(-50%)'
+                }}>
 				<Card>
-					<CardImg width="100%" object src={dish.image} alt={dish.name} />
+					<CardImg top src={baseUrl + dish.image} alt={dish.name} />
 					<CardBody>
 						<CardTitle> {dish.name} </CardTitle>
 						<CardText> {dish.description} </CardText>
 					</CardBody>
 				</Card>
+            </FadeTransform>
+				
 			</div>
 		);
 	} else {
@@ -171,7 +184,7 @@ const RenderDish = ({ dish }) => {
 	}
 };
 
-const RenderComments = ({ comments }) => {
+const RenderComments = ({ comments, postComment, dishId }) => {
 	if (comments != null) {
 		let list = comments.map((comment) => {
 			return (
@@ -179,7 +192,7 @@ const RenderComments = ({ comments }) => {
 					<div>
 						<p>{comment.comment}</p>
 						<p>
-							--{comment.author},
+							-- {comment.author},
 							{new Intl.DateTimeFormat("en-US", {
 								year: "numeric",
 								month: "short",
@@ -194,7 +207,7 @@ const RenderComments = ({ comments }) => {
 			<div className="col-12 col-md-5 m-1">
 				<h4>Comments</h4>
 				<ul className="list-unstyled">{list}</ul>
-				<CommentFormComponent />
+				<CommentFormComponent dishId={dishId} postComment={postComment} />
 			</div>
 		);
 	} else {
@@ -207,9 +220,28 @@ const RenderComments = ({ comments }) => {
 };
 
 const DishDetail = (props) => {
-	return (
-		<div className="container">
-			<div className="row">
+	if(props.isLoading){
+		return(
+			<div className="container">
+				<div className="row">
+					<Loading />
+				</div>
+			</div>
+		)
+	}
+	else if (props.errMess){
+		return(
+			<div className="container">
+				<div className="row">
+					<h4 className="text-danger"> {props.errMess} </h4>
+				</div>
+			</div>
+		)
+	}
+	else {
+		return (
+			<div className="container">
+				<div className="row">
 				<Breadcrumb>
 					<BreadcrumbItem>
 						<Link to="/menu">Menu</Link>
@@ -224,10 +256,11 @@ const DishDetail = (props) => {
 			</div>
 			<div className="row">
 				<RenderDish dish={props.dish} />
-				{props.dish && <RenderComments comments={props.comments} />}
+				{props.dish && <RenderComments comments={props.comments} postComment={props.postComment} dishId={props.dish.id} />}
 			</div>
 		</div>
-	);
+		);}
+	
 };
 
 export default DishDetail;
